@@ -12,22 +12,21 @@ var systems = map[reflect.Type]MemSystem{}
 var componentsLastId uint
 
 // AddComponent adds any Component to the specified Entity. Component is a simple data struct.
-func AddComponent(entity Entity, comp any) {
-	if isPointer(comp) {
-		panic("Pointers not allowed!")
-	}
-
-	tcomp := reflect.TypeOf(comp)
+func AddComponent[T any](entity Entity) *T {
+	tcomp := typeOf[T]()
 	cid := getCompId(tcomp)
 
 	entities[entity] = entities[entity] | 1<<cid
 
 	if systems[tcomp] == nil {
-		systems[tcomp] = NewMemSystem(entity, comp, 1)
+
+		systems[tcomp] = NewMemSystem(ID(cid), reflect.New(tcomp).Interface(), 1)
 		maskComponents[1<<cid] = tcomp
 	}
-	systems[tcomp].Set(entity, comp)
+	point := systems[tcomp].New(entity)
+
 	updateFilters(true, EntityMaskPair{entity, entities[entity]})
+	return (*T)(point)
 }
 
 func getCompId(comp reflect.Type) uint {
@@ -35,6 +34,10 @@ func getCompId(comp reflect.Type) uint {
 	if _, ok := componentsId[tcomp]; !ok {
 		componentsLastId++
 		componentsId[tcomp] = componentsLastId
+		// if systems[tcomp] == nil {
+		// 	systems[tcomp] = NewMemSystem(ID(componentsId[tcomp]), comp, 1)
+		// 	maskComponents[1<<componentsId[tcomp]] = tcomp
+		// }
 	}
 	return componentsId[tcomp]
 }
@@ -61,7 +64,7 @@ func remComponentsFromEntities(ents ...Entity) {
 func GetComponent[T any](entity Entity) unsafe.Pointer {
 	tcomp := typeOf[T]()
 	if systems[tcomp] == nil {
-		panic(fmt.Sprintf("Compent [%s] does not exist in memory pool", tcomp.Name()))
+		panic(fmt.Sprintf("Component [%s] does not exist in memory pool", tcomp.Name()))
 	}
 	return systems[tcomp].Get(entity)
 }

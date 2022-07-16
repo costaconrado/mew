@@ -9,9 +9,6 @@ var entities map[Entity]Mask = map[Entity]Mask{}
 
 var currentEntityId Entity
 
-// Add is similar to the AddComponent(entity, component), just shorter way to do this
-func (e Entity) Add(c any) { AddComponent(e, c) }
-
 // NewEntity creates new Entity in the game world.
 func NewEntity() Entity {
 	var id ID

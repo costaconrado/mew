@@ -1,6 +1,7 @@
 package mew
 
 import (
+	"fmt"
 	"reflect"
 	"sort"
 )
@@ -47,7 +48,8 @@ func (e *entityFilter) indexOf(entity Entity, limit int) int {
 func NewFilter(components ...interface{}) Filter {
 	mask := Mask(0)
 	for _, comp := range components {
-		mask |= 1 << componentsId[reflect.TypeOf(comp)]
+		mask |= 1 << getCompId(reflect.TypeOf(comp))
+		fmt.Printf("adding compoent [%s] to filter. New masl [%06b]\n", reflect.TypeOf(comp).Name(), mask)
 	}
 
 	filter := &entityFilter{

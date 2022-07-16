@@ -18,7 +18,7 @@ func AddComponent(entity Entity, comp any) {
 	}
 
 	tcomp := reflect.TypeOf(comp)
-	cid := getCompId(comp)
+	cid := getCompId(tcomp)
 
 	entities[entity] = entities[entity] | 1<<cid
 
@@ -30,7 +30,7 @@ func AddComponent(entity Entity, comp any) {
 	updateFilters(true, EntityMaskPair{entity, entities[entity]})
 }
 
-func getCompId(comp any) uint {
+func getCompId(comp reflect.Type) uint {
 	tcomp := reflect.TypeOf(comp)
 	if _, ok := componentsId[tcomp]; !ok {
 		componentsLastId++

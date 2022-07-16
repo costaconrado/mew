@@ -27,6 +27,7 @@ func AddComponent(entity Entity, comp any) {
 		maskComponents[1<<cid] = tcomp
 	}
 	systems[tcomp].New(entity)
+	updateFilters(true, EntityMaskPair{entity, entities[entity]})
 }
 
 func getCompId(comp any) uint {
@@ -42,6 +43,7 @@ func DelComponent[T any](entity Entity) {
 	tcomp := typeOf[T]()
 	systems[tcomp].Recycle(entity)
 	entities[entity] &^= 1 << componentsId[tcomp]
+	updateFilters(false, EntityMaskPair{entity, entities[entity]})
 }
 
 func remComponentsFromEntities(ents ...Entity) {

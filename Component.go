@@ -26,7 +26,7 @@ func AddComponent(entity Entity, comp any) {
 		systems[tcomp] = NewMemSystem(entity, comp, 1)
 		maskComponents[1<<cid] = tcomp
 	}
-	systems[tcomp].New(entity)
+	systems[tcomp].Set(entity, comp)
 	updateFilters(true, EntityMaskPair{entity, entities[entity]})
 }
 

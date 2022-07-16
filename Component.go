@@ -8,7 +8,7 @@ import (
 
 var componentsId = map[reflect.Type]uint{}
 var maskComponents = map[Mask]reflect.Type{}
-var systems map[reflect.Type]MemSystem
+var systems = map[reflect.Type]MemSystem{}
 var componentsLastId uint
 
 // AddComponent adds any Component to the specified Entity. Component is a simple data struct.
